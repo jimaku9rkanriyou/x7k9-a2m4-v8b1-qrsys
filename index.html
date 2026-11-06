@@ -52,11 +52,18 @@
     // ★前回のURLをそのまま入れています
     const GAS_URL = "https://script.google.com/macros/s/AKfycbzSyruVEPh4bN5rilmItU0UIw9tfjwckgzR3-i2eHyvx7eiib_I5x7ovri612lFWNf7hQ/exec";
     let isProcessing = false;
+    let lastScanTime = 0; // ★追加：連打防止用の時間記録
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     // 1. QRコードを読み取った時の処理（GET通信版）
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     function onScanSuccess(decodedText) {
+      // ★ここから追加：前回から5秒（5000ミリ秒）以内なら処理を無視して弾く
+      const currentTime = new Date().getTime();
+      if (currentTime - lastScanTime < 5000) return;
+      lastScanTime = currentTime;
+      // ★ここまで追加
+
       if (isProcessing) return;
       isProcessing = true;
       if (navigator.vibrate) navigator.vibrate(150);
